@@ -12,6 +12,7 @@ dotenv.config({
     path: 'config.env'
 });
 const dbConnection = require('./Config/database');
+const { webhookCheckout } = require('./services/orderService');
 // Connect database
 dbConnection();
 
@@ -24,8 +25,16 @@ app.options('*', cors());
 
 // Compress All respone
 app.use(compression( ))
+
+// checkout webhook
+app.use('/webhook-checkout', express.raw({
+    type: 'application/json'
+}),webhookCheckout)
+
 // MiddleWare
 app.use(express.json())
+
+
 // מאפשר פתיחה תמונה 
 app.use(express.static(path.join(__dirname, 'uploads')));
 
