@@ -8,6 +8,9 @@ const bcrypt = require('bcryptjs');
 const ApiError = require('../utils/apiError');
 const sendEmail = require('../utils/sendEmail');
 const createToken = require('../utils/createToken');
+const {
+    sanitizeUserSignup,sanitizeUserLogin
+} = require('../utils/sanitizeData');
 
 // @desc    Signup
 // @route   GET /api/v1/auth/signup
@@ -22,7 +25,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
 
     const token = createToken(user._id);
     res.status(201).json({
-        data: user,
+        data: sanitizeUserSignup(user),
         token
     });
 });
@@ -44,7 +47,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 
     res.status(200).json({
-        data: user,
+        data:sanitizeUserLogin(user),
         token
     })
 })
@@ -53,7 +56,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 // @desc   make sure the user is logged in
 exports.protect = asyncHandler(async (req, res, next) => {
-   
+
     // 1) Check if token exist, if exist get
     let token;
     if (
